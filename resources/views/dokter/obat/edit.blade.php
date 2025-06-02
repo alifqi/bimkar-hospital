@@ -1,0 +1,46 @@
+@extends('layouts.app')
+
+@section('content')
+<div class="container py-4">
+    <div class="card">
+        <div class="card-header">
+            <h4>Edit Obat</h4>
+        </div>
+        <div class="card-body">
+
+            @if ($errors->any())
+                <div class="alert alert-danger">
+                    <ul class="mb-0">
+                        @foreach ($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+            @endif
+
+            <form action="{{ route('obat.update', $obat->id) }}" method="POST">
+                @csrf
+                @method('PUT')
+
+                <div class="mb-3">
+                    <label for="nama_obat" class="form-label">Nama Obat</label>
+                    <input type="text" name="nama_obat" id="nama_obat" class="form-control" value="{{ old('nama_obat', $obat->nama_obat) }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="kemasan" class="form-label">Kemasan</label>
+                    <input type="text" name="kemasan" id="kemasan" class="form-control" value="{{ old('kemasan', $obat->kemasan) }}">
+                </div>
+
+                <div class="mb-3">
+                    <label for="harga" class="form-label">Harga</label>
+                    <input type="number" name="harga" id="harga" class="form-control" value="{{ old('harga', $obat->harga) }}" required>
+                </div>
+
+                <button type="submit" class="btn btn-success">Perbarui</button>
+                <a href="{{ route('obat.index') }}" class="btn btn-secondary">Batal</a>
+            </form>
+        </div>
+    </div>
+</div>
+@endsection
