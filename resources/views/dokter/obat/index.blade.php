@@ -1,10 +1,8 @@
-@extends('layouts.app')
-
-@section('content')
+<x-app-layout>
 <div class="container py-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
         <h4 class="mb-0">Daftar Obat</h4>
-        <a href="{{ route('obat.create') }}" class="btn btn-primary">+ Tambah Obat</a>
+        <a href="{{ route('dokter.obat.create') }}" class="btn btn-primary">+ Tambah Obat</a>
     </div>
 
     @if(session('success'))
@@ -29,8 +27,8 @@
                         <td>{{ $obat->kemasan }}</td>
                         <td>Rp{{ number_format($obat->harga, 0, ',', '.') }}</td>
                         <td>
-                            <a href="{{ route('obat.edit', $obat->id) }}" class="btn btn-sm btn-warning">Edit</a>
-                            <form action="{{ route('obat.destroy', $obat->id) }}" method="POST" style="display:inline;">
+                            <a href="{{ route('dokter.obat.edit', $obat->id) }}" class="btn btn-sm btn-warning">Edit</a>
+                            <form action="{{ route('dokter.obat.destroy', $obat->id) }}" method="POST" style="display:inline;">
                                 @csrf
                                 @method('DELETE')
                                 <button onclick="return confirm('Yakin ingin menghapus?')" class="btn btn-sm btn-danger">Hapus</button>
@@ -47,4 +45,4 @@
         </div>
     </div>
 </div>
-@endsection
+</x-app-layout>

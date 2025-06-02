@@ -33,16 +33,19 @@ class ObatController extends Controller
             'harga' => $request->harga,
         ]);
 
-        return redirect()->route('obat.index')->with('success', 'Obat berhasil ditambahkan');
+        return redirect()->route('dokter.obat.index')->with('success', 'Obat berhasil ditambahkan');
     }
 
-    public function edit(Obat $obat)
+    public function edit($id)
     {
+        $obat = Obat::findOrFail($id);
+
         return view('dokter.obat.edit', compact('obat'));
     }
 
-    public function update(Request $request, Obat $obat)
+    public function update(Request $request, $id)
     {
+        $obat = Obat::find('id', $id);
         $request->validate([
             'nama_obat' => 'required|string|max:255',
             'kemasan' => 'nullable|string|max:255',
@@ -51,13 +54,15 @@ class ObatController extends Controller
 
         $obat->update($request->all());
 
-        return redirect()->route('obat.index')->with('success', 'Obat berhasil diperbarui');
+        return redirect()->route('dokter.obat.index')->with('success', 'Obat berhasil diperbarui');
     }
 
-    public function destroy(Obat $obat)
+    public function destroy($id)
     {
+        $obat = Obat::findOrFail($id);
+        
         $obat->delete();
 
-        return redirect()->route('obat.index')->with('success', 'Obat berhasil dihapus');
+        return redirect()->route('dokter.obat.index')->with('success', 'Obat berhasil dihapus');
     }
 }

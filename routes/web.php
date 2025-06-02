@@ -5,14 +5,12 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Dokter\JadwalPeriksaController;
 use App\Http\Controllers\Dokter\ObatController;
 
+Route::get('/', function () {
+    return view('welcome');
+});
+
 // Route untuk Dokter
 Route::middleware(['auth', 'role:dokter'])->prefix('dokter')->group(function () {
-
-    // Halaman utama dokter
-    Route::get('/', function () {
-        return view('welcome');
-    });
-
     // Dashboard dokter
     Route::get('/dashboard', function () {
         return view('dokter.dashboard');
@@ -24,6 +22,17 @@ Route::middleware(['auth', 'role:dokter'])->prefix('dokter')->group(function () 
         Route::post('/', [JadwalPeriksaController::class, 'store'])->name('dokter.jadwal-periksa.store');
         Route::patch('/{id}', [JadwalPeriksaController::class, 'update'])->name('dokter.jadwal-periksa.update');
     });
+    
+    // Obat
+    Route::prefix('obat')->group(function () {
+        Route::get('/', [ObatController::class, 'index'])->name('dokter.obat.index');
+        Route::get('/create/', [ObatController::class, 'create'])->name('dokter.obat.create');
+        Route::post('/store', [ObatController::class, 'store'])->name('dokter.obat.store');
+        Route::get('/edit/{id}', [ObatController::class, 'edit'])->name('dokter.obat.edit');
+        Route::patch('/update/{id}', [ObatController::class, 'update'])->name('dokter.obat.update');
+        Route::delete('/destroy/{id}', [ObatController::class, 'destroy'])->name('dokter.obat.destroy');
+    });
+
 });
 
 // Route untuk Pasien
@@ -32,16 +41,6 @@ Route::middleware(['auth', 'role:pasien'])->prefix('pasien')->group(function () 
     Route::get('/dashboard', function () {
         return view('pasien.dashboard');
     })->name('pasien.dashboard');
-});
-
-// Route untuk obat
-Route::middleware(['auth', 'role:dokter'])->group(function () {
-    Route::resource('obat', ObatController::class);
-});
-
-// Route default (root URL)
-Route::get('/', function () {
-    return view('auth.login');
 });
 
 // Auth routes

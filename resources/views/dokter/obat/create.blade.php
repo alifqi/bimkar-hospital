@@ -18,7 +18,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('obat.store') }}" method="POST">
+            <form action="{{ route('dokter.obat.store') }}" method="POST">
                 @csrf
 
                 <div class="mb-3">
@@ -37,7 +37,7 @@
                 </div>
 
                 <button type="submit" class="btn btn-primary">Simpan</button>
-                <a href="{{ route('obat.index') }}" class="btn btn-secondary">Batal</a>
+                <a href="{{ route('dokter.obat.index') }}" class="btn btn-secondary">Batal</a>
             </form>
         </div>
     </div>

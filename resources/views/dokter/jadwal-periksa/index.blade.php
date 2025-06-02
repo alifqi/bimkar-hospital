@@ -1,5 +1,4 @@
-<div>
-    <!-- Jadwal Periksa - Dokter -->
+<!-- Jadwal Periksa - Dokter -->
     <x-app-layout>
         <x-slot name="header">
             <h2 class="text-xl font-semibold leading-tight text-gray-800">
@@ -135,4 +134,3 @@
             </div>
         </div>
     </x-app-layout>
-</div>
