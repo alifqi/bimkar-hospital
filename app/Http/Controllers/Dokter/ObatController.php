@@ -45,7 +45,7 @@ class ObatController extends Controller
 
     public function update(Request $request, $id)
     {
-        $obat = Obat::find('id', $id);
+        $obat = Obat::findOrFail($id);
         $request->validate([
             'nama_obat' => 'required|string|max:255',
             'kemasan' => 'nullable|string|max:255',

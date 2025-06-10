@@ -29,7 +29,7 @@ Route::middleware(['auth', 'role:dokter'])->prefix('dokter')->group(function () 
         Route::get('/create/', [ObatController::class, 'create'])->name('dokter.obat.create');
         Route::post('/store', [ObatController::class, 'store'])->name('dokter.obat.store');
         Route::get('/edit/{id}', [ObatController::class, 'edit'])->name('dokter.obat.edit');
-        Route::patch('/update/{id}', [ObatController::class, 'update'])->name('dokter.obat.update');
+        Route::put('/update/{id}', [ObatController::class, 'update'])->name('dokter.obat.update');
         Route::delete('/destroy/{id}', [ObatController::class, 'destroy'])->name('dokter.obat.destroy');
     });
 
