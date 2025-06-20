@@ -78,23 +78,34 @@ class MemeriksaController extends Controller
     public function update(Request $request, $id)
     {
         $request->validate([
-            'tgl_periksa'   => 'required|date',
-            'catatan'       => 'required|string',
-            'obat'          => 'required|string',
+            'tgl_periksa' => 'required|date',
+            'catatan' => 'required|string',
+            'obat' => 'required|array',
+            'obat.*' => 'exists:obats,id',
             'biaya_periksa' => 'required|numeric',
         ]);
 
+        // Temukan data pemeriksaan yang akan diupdate
         $periksa = Periksa::findOrFail($id);
 
+        // Update data pemeriksaan
         $periksa->update([
-            'tgl_periksa'   => $request->tgl_periksa,
-            'catatan'       => $request->catatan,
+            'tgl_periksa' => $request->tgl_periksa,
+            'catatan' => $request->catatan,
             'biaya_periksa' => $request->biaya_periksa,
         ]);
 
+        // Hapus detail obat yang lama
         DetailPeriksa::where('id_periksa', $periksa->id)->delete();
 
-        return redirect()->route('dokter.memeriksa.index')
-            ->with('status', 'memeriksa-updated');
+        // Buat detail obat yang baru
+        foreach ($request->obat as $obatId) {
+            DetailPeriksa::create([
+                'id_periksa' => $periksa->id,
+                'id_obat' => $obatId,
+            ]);
+        }
+
+        return redirect()->route('dokter.memeriksa.index')->with('status', 'memeriksa-updated');
     }
 }

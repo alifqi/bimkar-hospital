@@ -1,8 +1,7 @@
-{{-- resources/views/dokter/edit.blade.php --}}
 <x-app-layout>
     <x-slot name="header">
         <h2 class="text-xl font-semibold leading-tight text-gray-800">
-            {{ __('Edit Pemeriksaan') }}
+            {{ __('Memeriksa') }}
         </h2>
     </x-slot>
 
@@ -15,66 +14,98 @@
                             <h2 class="text-lg font-medium text-gray-900">
                                 {{ __('Edit Pemeriksaan Pasien') }}
                             </h2>
+
+                            <p class="mt-1 text-sm text-gray-600">
+                                {{ __('Silakan perbarui data pemeriksaan pasien sesuai dengan hasil diagnosis dan obat yang diberikan.') }}
+                            </p>
                         </header>
 
-                        <form class="mt-6" action="{{ route('dokter.memeriksa.update', $janjiPeriksa->id) }}" method="POST">
+                        <form class="mt-6" id="formEdit"
+                            action="{{ route('dokter.memeriksa.update', $janjiPeriksa->periksa->id) }}" method="POST">
                             @csrf
                             @method('PATCH')
 
                             <div class="mb-3 form-group">
-                                <label>Nama</label>
-                                <input type="text" class="form-control" value="{{ $janjiPeriksa->pasien->nama }}" readonly>
+                                <label for="editNamaInput">Nama</label>
+                                <input type="text" class="rounded form-control" id="editNamaInput"
+                                    value="{{ $janjiPeriksa->pasien->nama }}" readonly>
                             </div>
 
                             <div class="mb-3 form-group">
-                                <label for="tgl_periksa">Tanggal Periksa</label>
-                                <input type="datetime-local" class="form-control" name="tgl_periksa"
-                                    value="{{ \Carbon\Carbon::parse($janjiPeriksa->periksa->tgl_periksa)->format('Y-m-d\TH:i') }}"
+                                <label for="edit_tgl_periksa">Tanggal
+                                    Periksa</label>
+                                <input type="datetime-local" class="rounded form-control" id="edit_tgl_periksa"
+                                    name="tgl_periksa"
+                                    value="{{ date('Y-m-d\TH:i', strtotime($janjiPeriksa->periksa->tgl_periksa)) }}"
                                     required>
                             </div>
 
                             <div class="mb-3 form-group">
-                                <label for="catatan">Catatan</label>
-                                <textarea class="form-control" name="catatan" rows="3">{{ $janjiPeriksa->periksa->catatan }}</textarea>
+                                <label for="edit_catatan">Catatan</label>
+                                <textarea class="rounded form-control" id="edit_catatan" name="catatan" rows="3">{{ $janjiPeriksa->periksa->catatan }}</textarea>
                             </div>
 
                             <div class="mb-3 form-group">
-                                <label for="obat">Pilih Obat</label>
-                                <select class="form-control" name="obat" id="obat" onchange="hitungBiaya()">
+                                <label for="edit_obat">Pilih
+                                    Obat</label>
+                                <select class="rounded form-control" id="edit_obat" name="obat[]" multiple
+                                    onchange="hitungEditBiaya()">
                                     @foreach ($obats as $obat)
-                                        <option value="{{ $obat->id }}"
-                                            data-harga="{{ $obat->harga }}"
-                                            {{ $janjiPeriksa->periksa->obat_id == $obat->id ? 'selected' : '' }}>
-                                            {{ $obat->nama_obat }} - {{ $obat->kemasan }} (Rp {{ number_format($obat->harga, 0, ',', '.') }})
+                                        <option value="{{ $obat->id }}" data-harga="{{ $obat->harga }}"
+                                            {{ in_array($obat->id, $janjiPeriksa->periksa->detailPeriksas->pluck('id_obat')->toArray()) ? 'selected' : '' }}>
+                                            {{ $obat->nama_obat }} -
+                                            {{ $obat->kemasan }} (Rp
+                                            {{ number_format($obat->harga, 0, ',', '.') }})
                                         </option>
                                     @endforeach
                                 </select>
+                                <small class="form-text text-muted">Tekan Ctrl
+                                    (Windows)
+                                    atau Command (Mac) untuk memilih lebih dari
+                                    satu.</small>
                             </div>
 
                             <div class="mb-3 form-group">
-                                <label for="biaya_periksa">Biaya Pemeriksaan (Rp)</label>
-                                <input type="text" class="form-control" id="biaya_periksa"
-                                    name="biaya_periksa"
-                                    value="{{ $janjiPeriksa->periksa->biaya_periksa }}" readonly>
+                                <label for="edit_biaya_periksa">Biaya
+                                    Pemeriksaan (Rp)</label>
+                                <input type="text" class="rounded form-control" id="edit_biaya_periksa"
+                                    name="biaya_periksa" value="{{ $janjiPeriksa->periksa->biaya_periksa }}" readonly>
                             </div>
 
-                            <a href="{{ route('dokter.memeriksa.index') }}" class="btn btn-secondary">Batal</a>
-                            <button type="submit" class="btn btn-primary">Update</button>
+                            <a type="button" href="{{ route('dokter.memeriksa.index') }}" class="btn btn-secondary">
+                                Batal
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                Update
+                            </button>
                         </form>
 
                         <script>
-                            function hitungBiaya() {
+                            function hitungEditBiaya() {
                                 const baseBiaya = 150000;
                                 let totalBiaya = baseBiaya;
-                                const select = document.getElementById('obat');
-                                const selectedOption = select.options[select.selectedIndex];
-                                const harga = parseInt(selectedOption.getAttribute('data-harga')) || 0;
-                                totalBiaya += harga;
-                                document.getElementById('biaya_periksa').value = totalBiaya;
+                                const select = document.getElementById('edit_obat');
+                                const selectedOptions = Array.from(select.selectedOptions);
+
+                                selectedOptions.forEach(option => {
+                                    const harga = parseInt(option.getAttribute('data-harga')) || 0;
+                                    totalBiaya += harga;
+                                });
+
+                                document.getElementById('edit_biaya_periksa').value = totalBiaya;
                             }
 
-                            // Jalankan saat halaman pertama kali dibuka
-                            document.addEventListener('DOMContentLoaded', hitungBiaya);
+                            // Panggil fungsi perhitungan biaya saat halaman dimuat
+                            document.addEventListener('DOMContentLoaded', function() {
+                                // Panggil hanya jika modal edit ditampilkan
+                                const editModal = document.getElementById(
+                                    'editPasienModal');
+                                if (editModal) {
+                                    editModal.addEventListener('shown.bs.modal', function() {
+                                        hitungEditBiaya();
+                                    });
+                                }
+                            });
                         </script>
                     </section>
                 </div>
